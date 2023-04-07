@@ -1,50 +1,62 @@
 package com.knwldom.backend.api.controller;
 
-import com.knwldom.backend.api.model.User;
-import com.knwldom.backend.api.repository.UserDao;
+import com.knwldom.backend.api.controller.dto.UserDto;
+import com.knwldom.backend.api.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
+@RequestMapping(path = "/api/user", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
 
     @Autowired
-    UserDao userDao;
+    UserService userService;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET, produces = {
-            MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = "/")
     @ResponseBody
-    public ResponseEntity<List<User>> getUsers() {
+    public ResponseEntity<List<UserDto>> getUsers() {
 
-        List<User> userList = userDao.getAllUsers();
+        List<UserDto> userList = userService.getAllUsers();
 
         if (userList.isEmpty()) {
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<List<User>>(userList, HttpStatus.OK);
+        return new ResponseEntity<List<UserDto>>(userList, HttpStatus.OK);
 
     }
 
-    @RequestMapping(value = "/user", method = RequestMethod.GET, produces = {
-            MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = "/{id}")
     @ResponseBody
-    public ResponseEntity<User> getUserById(@RequestParam Integer id) {
+    public ResponseEntity<UserDto> getUserById(@PathVariable("id") Integer id) {
 
-        List<User> userList = userDao.getUserById(id);
+        UserDto user = userService.getUserById(id);
 
-        if (userList.isEmpty()) {
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<User>(userList.get(0), HttpStatus.OK);
+        return new ResponseEntity<UserDto>(user, HttpStatus.OK);
 
+    }
+
+    @GetMapping(value = "/me")
+    public ResponseEntity<?> getUserInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+
+            if (principal instanceof DefaultOidcUser) {
+                return ResponseEntity.ok(((DefaultOidcUser) principal).getUserInfo().toString());
+            }
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }
