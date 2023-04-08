@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/public")
+@RequestMapping("/public")
 public class PublicController {
 
     @GetMapping(value = "/")

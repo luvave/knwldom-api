@@ -39,8 +39,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .httpBasic()
                 .and().authorizeRequests()
-                .antMatchers("/api/public/**").permitAll()
-                .antMatchers("/api/user/**", "/api/relation/**").authenticated()
+                .antMatchers("/public/**").permitAll()
+                .antMatchers("/api/**").authenticated()
                 .and()
                 .oauth2ResourceServer().jwt();
         // @formatter:on
