@@ -3,114 +3,83 @@ package com.knwldom.backend.api.repository;
 import com.complexible.stardog.ext.spring.RowMapper;
 import com.complexible.stardog.ext.spring.SnarlTemplate;
 import com.knwldom.backend.api.components.StardogConnection;
+import com.knwldom.backend.api.model.KnowledgeGraph;
+import com.knwldom.backend.api.model.KnowledgeGraphType;
 import com.knwldom.backend.api.model.User;
 import com.stardog.stark.query.BindingSet;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.knwldom.backend.api.utils.StardogHelpers.getLabelFromBindingSet;
 
 @Repository
 public class UserDao {
-
-    private static final String PREFIX = "PREFIX knwldom: <http://knwldom.com/> ";
-    private static final String SELECT_ALL_USERS = PREFIX +
-            "SELECT ?user ?id ?name " +
-            "WHERE { " +
-            "  ?user a knwldom:User ; " +
-            "        knwldom:id ?id ; " +
-            "        knwldom:name ?name . " +
-            "}";
-
-    private static final String SELECT_USER_BY_ID(Integer id) {
-        return PREFIX +
-                "SELECT ?user ?name ?id" +
-                "WHERE {" +
-                "  ?user knwldom:id \"" + id +"\" ; " +
-                "        knwldom:name ?name ; " +
-                "        knwldom:id ?id . " +
-                "}";
-    }
-
     @Autowired
     private StardogConnection stardogConnection;
 
     public List<User> getAllUsers() {
-        SnarlTemplate snarl = stardogConnection.getSnarlTemplate();
-        List<User> results = snarl.query(SELECT_ALL_USERS, new RowMapper<User>() {
+        final String sparqlQuery =
+                "PREFIX knwldom: <http://knwldom.com/>\n" +
+                        "SELECT ?user ?userId ?displayName\n" +
+                        "WHERE {\n" +
+                        "  ?user a knwldom:user ;\n" +
+                        "        knwldom:userId ?userId ;\n" +
+                        "        knwldom:displayName ?displayName .\n" +
+                        "}";
 
+        return stardogConnection.getSnarlTemplate().query(sparqlQuery, new RowMapper<User>() {
             @Override
             public User mapRow(BindingSet bindingSet) {
-                User u = new User();
-
-                try {
-                    String name = bindingSet.binding("name").get().literal().get().label();
-                    String id = bindingSet.binding("id").get().literal().get().label();
-                    u.setName(name);
-                    u.setId(Integer.parseInt(id));
-
-                    String connectionQuery =  PREFIX + "SELECT ?connection WHERE { ?user knwldom:id \"" + id + "\" ; knwldom:hasConnectionTo ?connection . }";
-                    List<String> connections = snarl.query(connectionQuery, new RowMapper<String>() {
-                        @Override
-                        public String mapRow(BindingSet bindingSet) {
-                            try {
-                                return bindingSet.get("connection").toString();
-                            } catch (Exception e) {
-                                return "";
-                            }
-
-                        }
-                    });
-                    u.setHasConnectionTo(connections);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return u;
+                String userId = getLabelFromBindingSet(bindingSet, "userId");
+                String displayName = getLabelFromBindingSet(bindingSet, "displayName");
+                User user = new User(displayName, userId);
+                user.setHasFriend(new ArrayList<>());
+                user.setHasKnowledgeGraph(new ArrayList<>());
+                return user;
             }
-
-            }
-        );
-
-        return results;
+        });
     }
 
-    public List<User> getUserById(Integer id) {
+    public void createUser(User user) {
         SnarlTemplate snarl = stardogConnection.getSnarlTemplate();
-        List<User> results = snarl.query(SELECT_USER_BY_ID(id), new RowMapper<User>() {
+        String insertUserQuery = String.format(
+                "PREFIX knwldom: <http://knwldom.com/>\n" +
+                        "INSERT DATA {\n" +
+                        "  knwldom:%s a knwldom:user ;\n" +
+                        "    knwldom:userId \"%s\" ;\n" +
+                        "    knwldom:displayName \"%s\" .\n" +
+                        "}", user.getUserId(), user.getUserId(), user.getDisplayName());
+        snarl.update(insertUserQuery);
+    }
 
-                    @Override
-                    public User mapRow(BindingSet bindingSet) {
-                        User u = new User();
+    public List<KnowledgeGraph> getKnowledgeGraphsForUser(String userId) {
+        String sparqlQuery = "PREFIX knwldom: <http://knwldom.com/>\n" +
+                "SELECT ?graph ?graphName ?isDefault ?type\n" +
+                "WHERE {\n" +
+                "  ?user a knwldom:user ;\n" +
+                "        knwldom:userId \"" + userId + "\" .\n" +
+                "  ?user knwldom:hasKnowledgeGraph ?graph .\n" +
+                "  ?graph a knwldom:knowledgeGraph ;\n" +
+                "         knwldom:graphName ?graphName ;\n" +
+                "         knwldom:isDefault ?isDefault ;\n" +
+                "         knwldom:type ?type .\n" +
+                "}";
 
-                        try {
-                            String name = bindingSet.binding("name").get().literal().get().label();
-                            u.setName(name);
-                            u.setId(Integer.parseInt(id.toString()));
-                            String connectionQuery =  PREFIX + "SELECT ?connection WHERE { ?user knwldom:id \"" + id + "\" ; knwldom:hasConnectionTo ?connection . }";
-                            List<String> connections = snarl.query(connectionQuery, new RowMapper<String>() {
-                                @Override
-                                public String mapRow(BindingSet bindingSet) {
-                                    try {
-                                        return bindingSet.get("connection").toString();
-                                    } catch (Exception e) {
-                                        return "";
-                                    }
+        return stardogConnection.getSnarlTemplate().query(sparqlQuery, new RowMapper<KnowledgeGraph>() {
+            @Override
+            public KnowledgeGraph mapRow(BindingSet bindingSet) {
+                String graphUri = getLabelFromBindingSet(bindingSet, "graph");
+                String graphName = getLabelFromBindingSet(bindingSet, "graphName");
+                String isDefault = getLabelFromBindingSet(bindingSet, "isDefault");
+                String type = getLabelFromBindingSet(bindingSet, "type");
 
-                                }
-                            });
-                            u.setHasConnectionTo(connections);
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        return u;
-                    }
-
-                }
-        );
-
-        return results;
+                KnowledgeGraph knowledgeGraph = new KnowledgeGraph(graphName, new KnowledgeGraphType(type));
+                return knowledgeGraph;
+            }
+        });
     }
 }

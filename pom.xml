@@ -41,7 +41,7 @@
 		</repository>
 		<repository>
 			<id>stardog-public</id>
-			<url>https://maven.stardog.com/content/groups/public</url>
+			<url>https://maven.stardog.com</url>
 		</repository>
 	</repositories>
 
