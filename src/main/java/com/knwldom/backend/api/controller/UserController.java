@@ -23,27 +23,14 @@ public class UserController {
     @GetMapping(value = "/")
     @ResponseBody
     public ResponseEntity<List<UserDto>> getUsers() {
-
         List<UserDto> userList = userService.getAllUsers();
-
-        if (userList.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<List<UserDto>>(userList, HttpStatus.OK);
-
     }
 
-    @GetMapping(value = "/{id}")
-    @ResponseBody
-    public ResponseEntity<UserDto> getUserById(@PathVariable("id") Integer id) {
-
-        UserDto user = userService.getUserById(id);
-
-        if (user == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<UserDto>(user, HttpStatus.OK);
-
+    @PostMapping("/add")
+    public ResponseEntity<?> createUser(@RequestBody UserDto userDto) {
+        userService.createUser(userDto);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/me")

@@ -1,0 +1,105 @@
+#################################################################
+###  Generated with the experimental alpha version of the TTL exporter of WebVOWL (version 1.1.7)  http://visualdataweb.de/webvowl/   ###
+#################################################################
+
+@prefix : 		<http://knwldom.com/> .
+@prefix rdf: 		<http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: 		<http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: 		<http://www.w3.org/2002/07/owl#> .
+@prefix xsd: 		<http://www.w3.org/2001/XMLSchema#> .
+@prefix dc: 		<http://purl.org/dc/elements/1.1/> .
+@prefix xml: 		<http://www.w3.org/XML/1998/namespace> .
+@prefix wot: 		<http://xmlns.com/wot/0.1/> .
+@prefix : 		<http://knwldom.com/> .
+@prefix vs: 		<http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix foaf: 		<http://xmlns.com/foaf/0.1/> .
+@base 			<http://knwldom.com/> .
+
+<http://knwldom.com/> rdf:type owl:Ontology ;
+                      dc:title "Kingdom of Knowledge ontology"@en; 
+                      dc:description "Kingdom of Knowledge"@en; 
+                      owl:versionInfo "1"@en . 
+#################################################################
+
+###  Property Definitions (Number of Property) 11 ###
+#  --------------------------- Property 0------------------------- 
+:to rdf:type owl:ObjectProperty ;
+    rdfs:label "to"@IRI-based; 
+    rdfs:label "to"@en; 
+    rdfs:domain :Relation . 
+#  --------------------------- Property 1------------------------- 
+:userId rdf:type owl:DatatypeProperty, owl:FunctionalProperty ;
+        rdfs:label "userId"@IRI-based; 
+        rdfs:label "UserId"@en; 
+        rdfs:domain :user;
+        rdfs:range xsd:string . 
+#  --------------------------- Property 2------------------------- 
+:from rdf:type owl:ObjectProperty ;
+      rdfs:label "from"@IRI-based; 
+      rdfs:label "from"@en; 
+      rdfs:domain :knowledgeGraph;
+      rdfs:range :Relation . 
+#  --------------------------- Property 3------------------------- 
+:type rdf:type owl:ObjectProperty ;
+      rdfs:label "type"@IRI-based; 
+      rdfs:label "type"@en; 
+      rdfs:domain :knowledgeGraph;
+      rdfs:range :knowledgeGraphType . 
+#  --------------------------- Property 4------------------------- 
+:hasFriend rdf:type owl:ObjectProperty ;
+           rdfs:label "hasFriend"@IRI-based; 
+           rdfs:label "Has Friend"@en; 
+           rdfs:domain :user;
+           rdfs:range :user . 
+#  --------------------------- Property 5------------------------- 
+:contains rdf:type owl:ObjectProperty ;
+          rdfs:label "contains"@IRI-based; 
+          rdfs:label "contains"@en; 
+          rdfs:domain :knowledgeGraph;
+          rdfs:range :knowledgeGraph . 
+#  --------------------------- Property 6------------------------- 
+:hasKnowledgeGraph rdf:type owl:ObjectProperty ;
+                   rdfs:label "hasKnowledgeGraph"@IRI-based; 
+                   rdfs:label "Has Knowledge Graph"@en; 
+                   rdfs:domain :user;
+                   rdfs:range :knowledgeGraph . 
+#  --------------------------- Property 7------------------------- 
+:graphName rdf:type owl:DatatypeProperty ;
+           rdfs:label "graphName"@IRI-based; 
+           rdfs:label "Name"@en; 
+           rdfs:domain :knowledgeGraph;
+           rdfs:range xsd:string . 
+#  --------------------------- Property 8------------------------- 
+:relationName rdf:type owl:DatatypeProperty ;
+              rdfs:label "relationName"@IRI-based; 
+              rdfs:label "Name"@en; 
+              rdfs:domain :Relation;
+              rdfs:range xsd:string . 
+#  --------------------------- Property 9------------------------- 
+:displayName rdf:type owl:DatatypeProperty ;
+             rdfs:label "displayName"@IRI-based; 
+             rdfs:label "Display name"@en; 
+             rdfs:domain :user;
+             rdfs:range xsd:string . 
+#  --------------------------- Property 10------------------------- 
+:isDefault rdf:type owl:ObjectProperty ;
+           rdfs:label "Is Default"@en; 
+           rdfs:domain :user;
+           rdfs:range :knowledgeGraph . 
+###  Class Definitions (Number of Classes) 4 ###
+#  --------------------------- Class  0------------------------- 
+:knowledgeGraph rdf:type owl:Class; 
+                rdfs:label "knowledgeGraph"@IRI-based; 
+                rdfs:label "Knowledge Graph"@en . 
+#  --------------------------- Class  1------------------------- 
+:Relation rdf:type owl:Class; 
+          rdfs:label "Relation"@IRI-based; 
+          rdfs:label "Relation"@en . 
+#  --------------------------- Class  2------------------------- 
+:knowledgeGraphType rdf:type owl:Class; 
+                    rdfs:label "knowledgeGraphType"@IRI-based; 
+                    rdfs:label "Knowledge Graph Type"@en . 
+#  --------------------------- Class  3------------------------- 
+:user rdf:type owl:Class; 
+      rdfs:label "user"@IRI-based; 
+      rdfs:label "User"@en . 

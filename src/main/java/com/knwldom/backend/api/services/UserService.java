@@ -1,6 +1,7 @@
 package com.knwldom.backend.api.services;
 
 import com.knwldom.backend.api.controller.dto.UserDto;
+import com.knwldom.backend.api.controller.exceptions.Api500Exception;
 import com.knwldom.backend.api.model.User;
 import com.knwldom.backend.api.repository.UserDao;
 import org.modelmapper.ModelMapper;
@@ -20,18 +21,20 @@ public class UserService {
     private ModelMapper modelMapper;
 
     public List<UserDto> getAllUsers() {
-        List<User> userList = userDao.getAllUsers();
-
-        return userList.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
+        try {
+            List<User> userList = userDao.getAllUsers();
+            return userList.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new Api500Exception("Error occurred while fetching users");
+        }
     }
 
-    public UserDto getUserById(Integer id) {
-        List<User> userList = userDao.getUserById(id);
-
-        if (userList.isEmpty()) {
-            return null;
+    public void createUser(UserDto userDto) {
+        try {
+            User user = new User(userDto.getDisplayName(), userDto.getUserId());
+            userDao.createUser(user);
+        } catch (Exception e) {
+            throw new Api500Exception("Error occurred while creating a user");
         }
-
-        return modelMapper.map(userList.get(0), UserDto.class);
     }
 }

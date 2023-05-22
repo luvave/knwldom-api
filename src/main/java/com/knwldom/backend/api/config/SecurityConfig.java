@@ -40,7 +40,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .and().authorizeRequests()
                 .antMatchers("/public/**").permitAll()
-                .antMatchers("/api/**").authenticated()
+                // TODO .antMatchers("/api/**").authenticated()
+                .antMatchers("/api/**").permitAll()
                 .and()
                 .oauth2ResourceServer().jwt();
         // @formatter:on

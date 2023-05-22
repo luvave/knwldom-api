@@ -1,6 +1,8 @@
 package com.knwldom.backend.api.services;
 
-import com.knwldom.backend.api.controller.dto.RelationDto;
+import com.knwldom.backend.api.controller.dto.NewRelationDto;
+import com.knwldom.backend.api.controller.exceptions.Api500Exception;
+import com.knwldom.backend.api.repository.KnowledgeGraphDao;
 import com.knwldom.backend.api.repository.RelationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,13 +11,13 @@ import org.springframework.stereotype.Service;
 public class RelationService {
 
     @Autowired
-    RelationDao connectionDao;
+    RelationDao relationDao;
 
-    public void addARelationToUser(RelationDto relationDto) {
-        connectionDao.addARelation(relationDto.getUserId(), relationDto.getRelation());
-    }
-
-    public void removeARelationToUser(RelationDto relationDto) {
-        connectionDao.deleteARelation(relationDto.getUserId(), relationDto.getRelation());
+    public void addRelationToGraph(NewRelationDto newRelationDto) {
+        try {
+            relationDao.addRelationToGraph(newRelationDto.getGraphUri(), newRelationDto.getRelationName(), newRelationDto.getTo());
+        } catch (Exception e) {
+            throw new Api500Exception("Error occurred while adding the relation");
+        }
     }
 }
