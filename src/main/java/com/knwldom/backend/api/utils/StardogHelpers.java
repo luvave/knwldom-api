@@ -2,8 +2,11 @@ package com.knwldom.backend.api.utils;
 
 import com.stardog.stark.Literal;
 import com.stardog.stark.Value;
+import com.stardog.stark.impl.IRIImpl;
 import com.stardog.stark.query.BindingSet;
 import lombok.SneakyThrows;
+
+import static com.knwldom.backend.api.repository.Constants.URI_PREFIX;
 
 public class StardogHelpers {
 
@@ -14,7 +17,14 @@ public class StardogHelpers {
             if (value instanceof Literal) {
                 return ((Literal) value).label();
             }
+            if (value instanceof IRIImpl) {
+                return ((IRIImpl) value).toString();
+            }
         }
         throw new Exception("Failed getting " + bindingName);
+    }
+
+    public static String stripURIPrefix(String variable) {
+        return variable.replaceFirst(URI_PREFIX, "");
     }
 }

@@ -1,27 +1,18 @@
 package com.knwldom.backend.api.model;
 
+import com.knwldom.backend.api.controller.dto.KnowledgeGraphDto;
 import lombok.*;
 
 import java.util.List;
 
-@RequiredArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class KnowledgeGraph {
-
-    @Getter
-    @Setter
-    @NonNull
-    private String name;
-
-    @Getter
-    @Setter
-    @NonNull
-    private KnowledgeGraphType type;
-
-    @Getter
-    @Setter
-    private List<KnowledgeGraph> nestedGraphs;
-
-    @Getter
-    @Setter
+    private KnowledgeGraphType knowledgeGraphType;
+    private String graphUri;
+    private String graphName;
     private List<Relation> relations;
+    private List<KnowledgeGraph> contains;
 }

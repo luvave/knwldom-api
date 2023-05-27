@@ -2,11 +2,13 @@ package com.knwldom.backend.api.model;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class KnowledgeGraphType {
-    private String graphType;
-    private String graphUri;
+public class UserGraph {
+    private KnowledgeGraph graph;
+    private Boolean isDefault;
 }

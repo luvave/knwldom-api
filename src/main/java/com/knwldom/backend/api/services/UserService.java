@@ -31,7 +31,9 @@ public class UserService {
 
     public void createUser(UserDto userDto) {
         try {
-            User user = new User(userDto.getDisplayName(), userDto.getUserId());
+            User user = new User();
+            user.setDisplayName(userDto.getDisplayName());
+            user.setUserId(userDto.getUserId());
             userDao.createUser(user);
         } catch (Exception e) {
             throw new Api500Exception("Error occurred while creating a user");
