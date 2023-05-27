@@ -1,14 +1,15 @@
 package com.knwldom.backend.api.controller;
 
-import com.knwldom.backend.api.controller.dto.NewGraphDto;
+import com.knwldom.backend.api.controller.dto.NewKnowledgeGraphDto;
+import com.knwldom.backend.api.controller.dto.UserGraphDto;
 import com.knwldom.backend.api.services.KnowledgeGraphService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/graph", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -18,8 +19,15 @@ public class KnowledgeGraphController {
     KnowledgeGraphService knowledgeGraphService;
 
     @PostMapping("/add")
-    public ResponseEntity<?> createKnowledgeGraph(@RequestBody NewGraphDto newGraphDto) {
-        knowledgeGraphService.createKnowledgeGraph(newGraphDto);
+    public ResponseEntity<?> createKnowledgeGraph(@RequestBody NewKnowledgeGraphDto newGraphDto) {
+        knowledgeGraphService.createKnowledgeGraphForUser(newGraphDto);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = "/{userId}/all")
+    @ResponseBody
+    public ResponseEntity<List<UserGraphDto>> getGraphsForTheUser(@PathVariable String userId) {
+        List<UserGraphDto> graphList = knowledgeGraphService.getAllGraphForUser(userId);
+        return new ResponseEntity<List<UserGraphDto>>(graphList, HttpStatus.OK);
     }
 }

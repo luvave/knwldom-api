@@ -4,27 +4,13 @@ import lombok.*;
 
 import java.util.List;
 
-import java.io.Serializable;
-@RequiredArgsConstructor
-public class User implements Serializable {
-
-    @Getter
-    @Setter
-    @NonNull
-    private String displayName;
-    @Getter
-    @Setter
-    @NonNull
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
     private String userId;
-    @Getter
-    @Setter
-    private List<User> hasFriend;
-
-    @Getter
-    @Setter
-    private List<KnowledgeGraph> hasKnowledgeGraph;
-
-    @Getter
-    @Setter
-    private KnowledgeGraph isDefault;
+    private String displayName;
+    private List<User> friends;
+    private List<UserGraph> userGraphs; // updated this from UserGraph to List<UserGraph>
 }

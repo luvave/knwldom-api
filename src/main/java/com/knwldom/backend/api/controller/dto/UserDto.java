@@ -1,17 +1,15 @@
 package com.knwldom.backend.api.controller.dto;
 
-import com.knwldom.backend.api.model.KnowledgeGraph;
-import com.knwldom.backend.api.model.User;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto {
-
-    private String displayName;
     private String userId;
-    private List<UserDto> hasFriend;
-
-    private List<GraphDto> hasKnowledgeGraph;
+    private String displayName;
+    private List<UserDto> friends;
+    private UserGraphDto userGraph;
 }
