@@ -1,8 +1,10 @@
 package com.knwldom.backend.api.services;
 
+import com.knwldom.backend.api.controller.dto.KnowledgeGraphTypeDto;
 import com.knwldom.backend.api.controller.dto.NewKnowledgeGraphDto;
 import com.knwldom.backend.api.controller.dto.UserGraphDto;
 import com.knwldom.backend.api.controller.exceptions.Api500Exception;
+import com.knwldom.backend.api.model.KnowledgeGraphType;
 import com.knwldom.backend.api.model.UserGraph;
 import com.knwldom.backend.api.repository.KnowledgeGraphDao;
 import org.modelmapper.ModelMapper;
@@ -39,6 +41,15 @@ public class KnowledgeGraphService {
             return graphList.stream().map(graph -> modelMapper.map(graph, UserGraphDto.class)).collect(Collectors.toList());
         } catch (Exception e) {
             throw new Api500Exception("Error occurred while fetching graphs for the user");
+        }
+    }
+
+    public List<KnowledgeGraphTypeDto> getAllKnowledgeGraphTypes() {
+        try {
+            List<KnowledgeGraphType> typeList = knowledgeGraphDao.getKnowledgeGraphTypes();
+            return typeList.stream().map(type -> modelMapper.map(type, KnowledgeGraphTypeDto.class)).collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new Api500Exception("Error occurred while fetching graph types");
         }
     }
 }
