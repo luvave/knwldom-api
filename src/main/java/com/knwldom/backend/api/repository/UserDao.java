@@ -16,6 +16,7 @@ import java.util.Map;
 import static com.knwldom.backend.api.repository.Constants.PREFIXES;
 import static com.knwldom.backend.api.repository.Constants.URI_PREFIX;
 import static com.knwldom.backend.api.utils.StardogHelpers.getLabelFromBindingSet;
+import static com.knwldom.backend.api.utils.StardogHelpers.stripURIPrefix;
 
 @Repository
 public class UserDao {
@@ -63,5 +64,36 @@ public class UserDao {
         parameters.put("displayNameStr", user.getDisplayName());
 
         stardogConnection.getSnarlTemplate().update(SPARQL_QUERY_CREATE_USER, parameters);
+    }
+
+    public List<User> getUsersByNameContains(String substring) {
+        String SPARQL_QUERY_GET_USERS_BY_NAME_CONTAINS = PREFIXES +
+                "SELECT ?user ?displayName " +
+                "WHERE {" +
+                "  ?user rdf:type knwldom:user ;" +
+                "        knwldom:displayName ?displayName ." +
+                "  BIND(LCASE(?substring) AS ?lcSubstring)" +
+                "  FILTER(CONTAINS(LCASE(?displayName), ?lcSubstring))" +
+                "}";
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("substring", substring);
+
+        return stardogConnection.getSnarlTemplate().query(
+                SPARQL_QUERY_GET_USERS_BY_NAME_CONTAINS,
+                parameters,
+                (bindingSet) -> {
+                    String userId = getLabelFromBindingSet(bindingSet, "user");
+                    String displayName = getLabelFromBindingSet(bindingSet, "displayName");
+
+                    User user = new User();
+                    user.setUserId(stripURIPrefix(userId));
+                    user.setDisplayName(displayName);
+                    user.setFriends(new ArrayList<>());
+                    user.setUserGraphs(new ArrayList<>());
+
+                    return user;
+                }
+        );
     }
 }

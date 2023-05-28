@@ -46,4 +46,11 @@ public class UserController {
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+
+    @GetMapping(value = "/search")
+    @ResponseBody
+    public ResponseEntity<List<UserDto>> getUsersBySubstring(@RequestParam String name) {
+        List<UserDto> userList = userService.findUsersByNameContains(name);
+        return new ResponseEntity<List<UserDto>>(userList, HttpStatus.OK);
+    }
 }

@@ -1,17 +1,12 @@
 package com.knwldom.backend.api.repository;
 
-import com.complexible.stardog.ext.spring.RowMapper;
-import com.complexible.stardog.ext.spring.SnarlTemplate;
 import com.knwldom.backend.api.components.StardogConnection;
 import com.knwldom.backend.api.model.KnowledgeGraph;
 import com.knwldom.backend.api.model.KnowledgeGraphType;
 import com.knwldom.backend.api.model.UserGraph;
-import com.stardog.stark.Value;
-import com.stardog.stark.query.BindingSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +92,29 @@ public class KnowledgeGraphDao {
                     userGraph.setIsDefault(isDefault);
 
                     return userGraph;
+                }
+        );
+    }
+
+    public List<KnowledgeGraphType> getKnowledgeGraphTypes() {
+        String SPARQL_QUERY_GET_GRAPH_TYPES = PREFIXES +
+                "SELECT ?graphType ?graphTypeName " +
+                "WHERE {" +
+                "  ?graphType rdf:type knwldom:knowledgeGraphType ;" +
+                "             rdfs:label ?graphTypeName ." +
+                "}";
+
+        return stardogConnection.getSnarlTemplate().query(
+                SPARQL_QUERY_GET_GRAPH_TYPES,
+                (bindingSet) -> {
+                    String graphUri = getLabelFromBindingSet(bindingSet, "graphType");
+                    String graphType = getLabelFromBindingSet(bindingSet, "graphTypeName");
+
+                    KnowledgeGraphType knowledgeGraphType = new KnowledgeGraphType();
+                    knowledgeGraphType.setGraphType(graphType);
+                    knowledgeGraphType.setGraphUri(stripURIPrefix(graphUri));
+
+                    return knowledgeGraphType;
                 }
         );
     }

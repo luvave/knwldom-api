@@ -39,4 +39,13 @@ public class UserService {
             throw new Api500Exception("Error occurred while creating a user");
         }
     }
+
+    public List<UserDto> findUsersByNameContains(String searchString) {
+        try {
+            List<User> userList = userDao.getUsersByNameContains(searchString);
+            return userList.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new Api500Exception("Error occurred while searching users");
+        }
+    }
 }

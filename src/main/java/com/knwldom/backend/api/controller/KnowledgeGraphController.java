@@ -1,5 +1,6 @@
 package com.knwldom.backend.api.controller;
 
+import com.knwldom.backend.api.controller.dto.KnowledgeGraphTypeDto;
 import com.knwldom.backend.api.controller.dto.NewKnowledgeGraphDto;
 import com.knwldom.backend.api.controller.dto.UserGraphDto;
 import com.knwldom.backend.api.services.KnowledgeGraphService;
@@ -29,5 +30,12 @@ public class KnowledgeGraphController {
     public ResponseEntity<List<UserGraphDto>> getGraphsForTheUser(@PathVariable String userId) {
         List<UserGraphDto> graphList = knowledgeGraphService.getAllGraphForUser(userId);
         return new ResponseEntity<List<UserGraphDto>>(graphList, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/types")
+    @ResponseBody
+    public ResponseEntity<List<KnowledgeGraphTypeDto>> getGraphTypes() {
+        List<KnowledgeGraphTypeDto> typesList = knowledgeGraphService.getAllKnowledgeGraphTypes();
+        return new ResponseEntity<List<KnowledgeGraphTypeDto>>(typesList, HttpStatus.OK);
     }
 }

@@ -1,7 +1,6 @@
 package com.knwldom.backend.api.repository;
 
 import com.knwldom.backend.api.components.StardogConnection;
-import com.knwldom.backend.api.model.KnowledgeGraph;
 import com.knwldom.backend.api.model.Relation;
 import com.knwldom.backend.api.model.RelationType;
 import org.springframework.beans.factory.annotation.Autowired;
