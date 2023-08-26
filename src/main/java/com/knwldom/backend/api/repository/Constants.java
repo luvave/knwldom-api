@@ -10,4 +10,6 @@ public final class Constants {
             "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>";
 
     public static final String URI_PREFIX = "http://knwldom.com/";
+
+    public static final String USERID_PREFIX = "user";
 }

@@ -1,10 +1,7 @@
 package com.knwldom.backend.api.repository;
 
-import com.complexible.stardog.ext.spring.RowMapper;
-import com.complexible.stardog.ext.spring.SnarlTemplate;
 import com.knwldom.backend.api.components.StardogConnection;
 import com.knwldom.backend.api.model.User;
-import com.stardog.stark.query.BindingSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -13,10 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.knwldom.backend.api.repository.Constants.PREFIXES;
-import static com.knwldom.backend.api.repository.Constants.URI_PREFIX;
+import static com.knwldom.backend.api.repository.Constants.*;
 import static com.knwldom.backend.api.utils.StardogHelpers.getLabelFromBindingSet;
 import static com.knwldom.backend.api.utils.StardogHelpers.stripURIPrefix;
+import static com.knwldom.backend.api.utils.StardogHelpers.stripPrefix;
 
 @Repository
 public class UserDao {
@@ -54,7 +51,7 @@ public class UserDao {
                         "    knwldom:userId ?userId ;" +
                         "    knwldom:displayName ?displayName ." +
                         "} WHERE {" +
-                        "  BIND(IRI(CONCAT(\" " + URI_PREFIX + "\", \"user\", ?userIdStr)) AS ?userUri)" +
+                        "  BIND(IRI(CONCAT(\" " + URI_PREFIX + "\", \"" + USERID_PREFIX + "\", ?userIdStr)) AS ?userUri)" +
                         "  BIND(?userIdStr AS ?userId)" +
                         "  BIND(?displayNameStr AS ?displayName)" +
                         "}";
@@ -87,7 +84,7 @@ public class UserDao {
                     String displayName = getLabelFromBindingSet(bindingSet, "displayName");
 
                     User user = new User();
-                    user.setUserId(stripURIPrefix(userId));
+                    user.setUserId(stripPrefix(stripURIPrefix(userId), USERID_PREFIX));
                     user.setDisplayName(displayName);
                     user.setFriends(new ArrayList<>());
                     user.setUserGraphs(new ArrayList<>());

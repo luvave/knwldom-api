@@ -27,4 +27,8 @@ public class StardogHelpers {
     public static String stripURIPrefix(String variable) {
         return variable.replaceFirst(URI_PREFIX, "");
     }
+
+    public static String stripPrefix(String variable, String prefix) {
+        return variable.replaceFirst(prefix, "");
+    }
 }
