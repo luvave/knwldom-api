@@ -12,8 +12,7 @@ import java.util.Map;
 
 import static com.knwldom.backend.api.repository.Constants.PREFIXES;
 import static com.knwldom.backend.api.repository.Constants.URI_PREFIX;
-import static com.knwldom.backend.api.utils.StardogHelpers.getLabelFromBindingSet;
-import static com.knwldom.backend.api.utils.StardogHelpers.stripURIPrefix;
+import static com.knwldom.backend.api.utils.StardogHelpers.*;
 
 @Repository
 public class RelationDao {
@@ -39,6 +38,11 @@ public class RelationDao {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("relationTypeUriStr", relationTypeUri);
         parameters.put("relationTypeNameStr", relationTypeName);
+
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            String value = entry.getValue().toString();
+            parameters.put(entry.getKey(), encodeString(value));
+        }
 
         stardogConnection.getSnarlTemplate().update(SPARQL_QUERY_CREATE_RELATION_TYPE, parameters);
     }
@@ -86,6 +90,11 @@ public class RelationDao {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("graphUriStr", graphUri);
 
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            String value = entry.getValue().toString();
+            parameters.put(entry.getKey(), encodeString(value));
+        }
+
         return stardogConnection.getSnarlTemplate().query(
                 SPARQL_QUERY_GET_RELATIONS_FOR_GRAPH,
                 parameters,
@@ -131,6 +140,10 @@ public class RelationDao {
         parameters.put("to", to);
         parameters.put("typeUriStr", typeUri);
 
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            String value = entry.getValue().toString();
+            parameters.put(entry.getKey(), encodeString(value));
+        }
         stardogConnection.getSnarlTemplate().update(SPARQL_QUERY_CREATE_RELATION, parameters);
     }
 }

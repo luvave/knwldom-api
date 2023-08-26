@@ -13,8 +13,7 @@ import java.util.Map;
 
 import static com.knwldom.backend.api.repository.Constants.PREFIXES;
 import static com.knwldom.backend.api.repository.Constants.URI_PREFIX;
-import static com.knwldom.backend.api.utils.StardogHelpers.getLabelFromBindingSet;
-import static com.knwldom.backend.api.utils.StardogHelpers.stripURIPrefix;
+import static com.knwldom.backend.api.utils.StardogHelpers.*;
 
 @Repository
 public class KnowledgeGraphDao {
@@ -49,6 +48,11 @@ public class KnowledgeGraphDao {
         parameters.put("isDefaultStr", String.valueOf(isDefault));
         parameters.put("graphTypeUriStr", graphTypeUri);
 
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            String value = entry.getValue().toString();
+            parameters.put(entry.getKey(), encodeString(value));
+        }
+
         stardogConnection.getSnarlTemplate().update(SPARQL_QUERY_CREATE_KNOWLEDGEGRAPH, parameters);
     }
 
@@ -68,6 +72,11 @@ public class KnowledgeGraphDao {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("userId", userId);
+
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            String value = entry.getValue().toString();
+            parameters.put(entry.getKey(), encodeString(value));
+        }
 
         return stardogConnection.getSnarlTemplate().query(
                 SPARQL_QUERY_GET_USER_GRAPHS,

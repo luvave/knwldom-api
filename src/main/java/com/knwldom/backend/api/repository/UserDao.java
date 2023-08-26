@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.knwldom.backend.api.repository.Constants.*;
-import static com.knwldom.backend.api.utils.StardogHelpers.getLabelFromBindingSet;
-import static com.knwldom.backend.api.utils.StardogHelpers.stripURIPrefix;
-import static com.knwldom.backend.api.utils.StardogHelpers.stripPrefix;
+import static com.knwldom.backend.api.utils.StardogHelpers.*;
 
 @Repository
 public class UserDao {
@@ -60,6 +58,11 @@ public class UserDao {
         parameters.put("userIdStr", user.getUserId());
         parameters.put("displayNameStr", user.getDisplayName());
 
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            String value = entry.getValue().toString();
+            parameters.put(entry.getKey(), encodeString(value));
+        }
+
         stardogConnection.getSnarlTemplate().update(SPARQL_QUERY_CREATE_USER, parameters);
     }
 
@@ -75,6 +78,11 @@ public class UserDao {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("substring", substring);
+
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            String value = entry.getValue().toString();
+            parameters.put(entry.getKey(), encodeString(value));
+        }
 
         return stardogConnection.getSnarlTemplate().query(
                 SPARQL_QUERY_GET_USERS_BY_NAME_CONTAINS,
