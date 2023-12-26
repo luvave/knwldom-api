@@ -5,10 +5,7 @@ import com.stardog.stark.Value;
 import com.stardog.stark.impl.IRIImpl;
 import com.stardog.stark.query.BindingSet;
 import lombok.SneakyThrows;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import org.springframework.web.util.UriUtils;
 
 import static com.knwldom.backend.api.repository.Constants.URI_PREFIX;
 
@@ -37,10 +34,6 @@ public class StardogHelpers {
     }
 
     public static String encodeString(String s) {
-        try {
-            return URLEncoder.encode(s, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException("Error encoding URI component", e);
-        }
+        return UriUtils.encodePath(s, "UTF-8");
     }
 }
